@@ -30,7 +30,6 @@ public abstract class AOpernmrsFhirConstructorService {
 
 	public abstract Claim constructFhirClaimRequest(String patientId);
 
-	public abstract EligibilityRequest constructFhirEligibilityRequest(String patientId);
 
 	public abstract String getFhirPatient(String patientId);
 

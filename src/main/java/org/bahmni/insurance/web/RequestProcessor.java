@@ -2,7 +2,15 @@ package org.bahmni.insurance.web;
 
 import static org.apache.log4j.Logger.getLogger;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,13 +28,16 @@ import org.bahmni.insurance.serviceImpl.OpenmrsOdooServiceImpl;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.phloc.commons.io.resource.ClassPathResource;
 
 @RestController
 public class RequestProcessor {
@@ -38,7 +49,6 @@ public class RequestProcessor {
 	private final IOpenmrsOdooService odooService;
 	private final IFhirResourceDaoService fhirDaoService;
 	
-
 	@Autowired
 	public RequestProcessor(OpenmrsFhirConstructorServiceImpl fhirConstructorServiceImpl,
 			OpenmrsOdooServiceImpl openmrsOdooServiceImpl,
@@ -50,17 +60,19 @@ public class RequestProcessor {
 		this.fhirDaoService = fhirServiceImpl;
 	}
 
-	@RequestMapping(path = "/request/eligibity")
-	public void requestEligibity(HttpServletResponse response) {
-		logger.debug("requestEligibity");
-
-	}
-	
-	@RequestMapping(path = "/openIMIS/login")
+	@RequestMapping(method = RequestMethod.GET, value = "/request/eligibility/{patientId}", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<String> checkLogin(HttpServletResponse response) throws RestClientException, URISyntaxException {
+		public String requestEligibity(HttpServletResponse response, @PathVariable("patientId") String patientId) throws IOException {
 		logger.debug("requestEligibity");
-		return imisClient.loginCheck();
+	
+		 InputStream is = RequestProcessor.class.getResourceAsStream("/FHIR-Resources/eligibility-response.json");
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            System.out.println(line);
+	        }
+	        return line;
+
 	}
 
 	@RequestMapping(path = "/request/claimsubmit")
@@ -68,6 +80,7 @@ public class RequestProcessor {
 		logger.debug("requestClaimSubmit");
 		Claim claimRequest = fhirConstructorService.constructFhirClaimRequest("StringPatientId"); // TODO: get this
 																									// StringPatientId
+																									// from web param
 		ClaimResponse claimResponse = imisClient.getClaimResponse(claimRequest);
 	}
 	
@@ -107,6 +120,7 @@ public class RequestProcessor {
 	@ResponseBody
 	public String generatePatient(HttpServletResponse response, @PathVariable("patientId") String patientId) {
 		logger.debug("generatePatient");
+		
 		return fhirConstructorService.getFhirPatient(patientId); //9065024b-9499-4c9b-9a2f-a53f703be2aa
 
 	}

@@ -137,14 +137,7 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>rpm-maven-plugin</artifactId>
 				<version>2.1.5</version>
-				<executions>
-					<execution>
-						<id>generate-rpm</id>
-						<goals>
-							<goal>rpm</goal>
-						</goals>
-					</execution>
-				</executions>
+				          <extensions>true</extensions>
 				<configuration>
 					<name>insurance-integration</name>
 					<group>ict4h.atomfeed</group>

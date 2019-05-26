@@ -1,5 +1,8 @@
 package org.bahmni.insurance.serviceImpl;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.bahmni.insurance.Properties;
@@ -27,7 +30,7 @@ public class OpenmrsFhirConstructorServiceImpl extends AOpernmrsFhirConstructorS
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		return this.getApiClient()
-				.exchange(this.getProperties().openmrsFhirUrl + patientId, HttpMethod.GET, entity, String.class).getBody();
+				.exchange(this.getProperties().openmrsUrl + patientId, HttpMethod.GET, entity, String.class).getBody();
 	}
 
 	@Override
@@ -36,10 +39,6 @@ public class OpenmrsFhirConstructorServiceImpl extends AOpernmrsFhirConstructorS
 		return null;
 	}
 
-	@Override
-	public EligibilityRequest constructFhirEligibilityRequest(String patientId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 }

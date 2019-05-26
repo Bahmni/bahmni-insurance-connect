@@ -11,7 +11,6 @@ import org.hl7.fhir.dstu3.model.EligibilityResponse;
 import org.hl7.fhir.dstu3.model.Task;
 import org.openmrs.module.fhir.api.helper.ClientHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -42,5 +41,4 @@ public abstract class AInsuranceClientService {
 
 	public abstract ClaimResponse getClaimStatus(Task claimStatusRequest);
 
-	public abstract ResponseEntity<String> loginCheck();
 }

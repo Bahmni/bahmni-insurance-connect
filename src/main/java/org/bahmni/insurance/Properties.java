@@ -11,26 +11,24 @@ public class Properties {
 
 	@Value("${openelis.db.url}")
 	public String openelisDBUrl;
+
+	@Value("${imis.url}")
+	public String imisUrl;
+
+	@Value("${imis.password}")
+	public String imisPassword;
 	
 	@Value("${imisconnect.user}")
 	public String imisConnectUser;
 
 	@Value("${imisconnect.password}")
 	public String imisConnectPassword;
-	
 
-	@Value("${openimis.api.url}")
-	public String imisUrl;
-
-	@Value("${openimis.api.user}")
+	@Value("${imis.user}")
 	public String imisUser;
 
-	@Value("${openimis.api.password}")
-	public String imisPassword;
-	
-
-	@Value("${openmrs.fhir.url}")
-	public String openmrsFhirUrl;
+	@Value("${openmrs.url}")
+	public String openmrsUrl;
 
 	@Value("${openmrs.password}")
 	public String openmrsPassword;

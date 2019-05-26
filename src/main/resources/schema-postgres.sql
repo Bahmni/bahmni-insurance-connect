@@ -4,3 +4,5 @@ CREATE TABLE IF NOT EXISTS FHIR_RESOURCE (
 	resource_type VARCHAR(10),
 	status VARCHAR(20), 
 	resource JSONB );
+
+  
