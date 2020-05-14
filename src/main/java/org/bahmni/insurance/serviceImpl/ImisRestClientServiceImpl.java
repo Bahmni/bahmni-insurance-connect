@@ -22,12 +22,10 @@ import org.bahmni.insurance.service.AInsuranceClientService;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.dstu3.model.Bundle.BundleLinkComponent;
 import org.hl7.fhir.dstu3.model.Claim;
 import org.hl7.fhir.dstu3.model.ClaimResponse;
 import org.hl7.fhir.dstu3.model.ClaimResponse.AdjudicationComponent;
 import org.hl7.fhir.dstu3.model.ClaimResponse.ItemComponent;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.ContactPoint;
 import org.hl7.fhir.dstu3.model.EligibilityRequest;
@@ -36,15 +34,9 @@ import org.hl7.fhir.dstu3.model.EligibilityResponse.BenefitComponent;
 import org.hl7.fhir.dstu3.model.EligibilityResponse.BenefitsComponent;
 import org.hl7.fhir.dstu3.model.EligibilityResponse.InsuranceComponent;
 import org.hl7.fhir.dstu3.model.HumanName;
-import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Money;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.dstu3.model.Resource;
-import org.hl7.fhir.dstu3.model.ResourceType;
 import org.hl7.fhir.dstu3.model.Task;
-import org.hl7.fhir.exceptions.FHIRException;/*
-												import org.openmrs.module.fhir.api.client.ClientHttpEntity;
-												import org.openmrs.module.fhir.api.helper.ClientHelper;*/
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -52,8 +44,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
@@ -145,7 +135,6 @@ public class ImisRestClientServiceImpl extends AInsuranceClientService {
 		String jsonClaimRequest = FhirParser.encodeResourceToString(claimRequest);
 		ResponseEntity<String> responseObject = sendPostRequest(jsonClaimRequest, properties.openImisFhirApiClaim);
 		ClaimResponse claimResponse = (ClaimResponse) FhirParser.parseResource(responseObject.getBody());
-		System.out.println(FhirParser.encodeResourceToString(claimResponse));
 		BigDecimal totalclaimedAmount = claimRequest.getTotal().getValue();
 		return populateClaimRespModel(claimResponse, totalclaimedAmount);
 	}
@@ -196,7 +185,8 @@ public class ImisRestClientServiceImpl extends AInsuranceClientService {
 	public EligibilityResponseModel checkEligibility(EligibilityRequest eligbilityRequest){
 		String jsonEligRequest = FhirParser.encodeResourceToString(eligbilityRequest);
 		EligibilityResponseModel ResponseELigible;
-		
+
+
 		ResponseEntity<String> responseObject = sendPostRequest(jsonEligRequest, properties.openImisFhirApiEligPolicyEnabled);
 		EligibilityResponse eligibilityResponse = (EligibilityResponse) FhirParser.parseResource(responseObject.getBody());
 		ResponseELigible = populateEligibilityRespModelPolicyEnabled(eligibilityResponse);
@@ -285,12 +275,11 @@ public class ImisRestClientServiceImpl extends AInsuranceClientService {
 	
 	@Override
 	public InsureeModel getInsuree(String chfID){
-		System.out.println(properties.imisUrl+"Patient/?identifier="+chfID);
-
 		String insureeStr = sendGetRequest(properties.imisUrl+"Patient/?identifier="+chfID);
 		//Patient patient = (Patient) FhirParser.parseResource(insureeStr);
 		Bundle bundle = (Bundle)FhirParser.parseResource(insureeStr);
 		return populateInsureeModel(bundle); 
+		
 	}
 	
 	private InsureeModel populateInsureeModel(Bundle bundle) {
@@ -299,7 +288,6 @@ public class ImisRestClientServiceImpl extends AInsuranceClientService {
 			Patient patient = (Patient) entry.getResource();
 			
 			insureeModel.setUuId(patient.getIdentifier().get(0).getValue());
-			
 			for(HumanName reponseName:patient.getName()) {
 				insureeModel.setFamilyName(reponseName.getFamily());
 				insureeModel.setGivenName(reponseName.getGivenAsSingleString());			
